@@ -1,0 +1,27 @@
+@startuml
+actor 用户 as U
+participant 前端 as F
+participant 后端 as B
+database 数据库 as DB
+
+U -> F: 输入用户名和密码
+F -> B: 发送登录请求
+activate B
+B -> DB: 查询账户信息和角色信息
+activate DB
+DB --> B: 返回账户信息和角色信息
+B --> F: 返回账户信息和角色信息
+deactivate DB
+alt 账户名和密码正确
+    B -> B: 验证密码
+    alt 密码正确
+        B --> F: 返回登录成功
+    else 密码错误
+        B --> F: 返回密码错误
+    end
+else 账户名不存在
+    B --> F: 返回账户名错误
+end
+deactivate B
+F -> U: 显示登录结果
+@enduml

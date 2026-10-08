@@ -1,0 +1,43 @@
+@startuml
+actor 用户 as U
+participant 客户端 as C
+participant 服务器 as S
+participant 路由服务 as RS
+
+U ->> C: 发起请求
+activate C
+
+C ->> S: 带有令牌的请求
+activate S
+
+S ->> RS: 调用 verifyToken(token)
+activate RS
+RS -->> S: 返回令牌信息
+deactivate RS
+
+S -->> C: 返回角色信息
+deactivate S
+
+alt 角色信息存在
+    S ->> RS: 获取角色菜单ID（getRoleMenuId(roleId)）
+    activate RS
+    RS -->> S: 返回角色菜单信息
+    deactivate RS
+    
+    S ->> RS: 获取路由信息（getRoutes(menuId)）
+    activate RS
+    RS -->> S: 返回路由信息
+    deactivate RS
+    
+    loop 对每个路由
+        S -->> C: 返回异步路由数据
+    end
+
+    S -->> C: 返回404路由数据
+    S -->> C: 响应异步路由
+else 角色信息不存在
+    S -->> C: 返回错误响应
+end
+
+deactivate C
+@enduml

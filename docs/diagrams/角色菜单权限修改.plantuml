@@ -1,0 +1,22 @@
+@startuml
+actor 用户 as U
+participant 前端 as F
+participant 后端 as B
+database 数据库 as DB
+
+U -> F: 提交更新角色菜单权限请求
+F -> B: 发送更新角色菜单权限请求
+activate B
+B -> B: 获取角色ID和菜单权限列表
+B -> B: 构建角色菜单权限对象数组
+B -> DB: 更新角色菜单权限列表
+activate DB
+DB --> B: 返回更新结果
+deactivate DB
+alt 更新成功
+    B --> F: 返回更新角色菜单权限成功的消息
+else 更新失败
+    B --> F: 返回更新角色菜单权限失败的消息
+end
+deactivate B
+@enduml

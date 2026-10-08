@@ -1,0 +1,33 @@
+@startuml
+actor 用户 as U
+participant 前端 as F
+participant 后端 as B
+database 数据库 as DB
+
+U -> F: 输入账户信息
+F -> B: 发送添加账户请求
+activate B
+B -> B: 检查角色是否指定
+alt 角色未指定
+    B -> B: 将角色分配为普通用户
+end
+B -> DB: 查询用户名是否已存在
+activate DB
+DB --> B: 返回查询结果
+deactivate DB
+alt 用户名已存在
+    B --> F: 返回当前用户名已存在的错误消息
+else 用户名不存在
+    B -> B: 对密码进行加密处理
+    B -> DB: 添加账户信息到数据库
+    activate DB
+    DB --> B: 返回添加结果
+    deactivate DB
+    alt 添加成功
+        B --> F: 返回注册成功的消息
+    else 添加失败
+        B --> F: 返回注册失败的消息
+    end
+end
+deactivate B
+@enduml

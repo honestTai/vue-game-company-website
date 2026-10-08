@@ -1,0 +1,29 @@
+@startuml
+actor 用户 as U
+participant 前端 as F
+participant 后端 as B
+database 数据库 as DB
+
+U -> F: 提交更新角色请求
+F -> B: 发送更新角色请求
+activate B
+B -> DB: 查询角色详细信息
+activate DB
+DB --> B: 返回角色详细信息
+deactivate DB
+alt 角色为超级管理员
+    B --> F: 返回超级管理员不可被修改的错误消息
+else 角色不是超级管理员
+    B -> B: 获取请求中的角色信息
+    alt 请求中只包含角色状态信息
+        B -> DB: 更新角色状态
+        DB -> B: 返回更新结果
+        B --> F: 返回角色状态修改成功的消息
+    else 请求中包含角色名称、描述等信息
+        B -> DB: 更新角色信息
+        DB -> B: 返回更新结果
+        B --> F: 返回角色信息修改成功的消息
+    end
+end
+deactivate B
+@enduml

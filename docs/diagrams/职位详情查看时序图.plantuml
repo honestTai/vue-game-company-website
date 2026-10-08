@@ -1,0 +1,25 @@
+@startuml
+actor 用户 as U
+participant 客户端 as C
+participant 服务器 as S
+participant JobService as JS
+U-> C:点击列表查看职位详情
+activate C
+C -> S: 发送获取职位详情请求
+activate S
+
+S -> JS: 调用 JobService.getJobDetail(jobId)
+activate JS
+JS --> S: 返回职位详情结果
+deactivate JS
+
+alt 获取到职位详情
+    S -> C: 返回包含职位详情的成功响应
+else
+    S -> C: 返回空的成功响应
+end
+
+deactivate S
+C -> U:渲染展示职位详情数据
+deactivate C
+@enduml

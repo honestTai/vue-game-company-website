@@ -1,0 +1,46 @@
+@startuml
+actor 用户 as C
+participant 前端 as F
+participant 服务器 as S
+participant 文件系统 as FS
+participant 配置 as Config
+participant uploadFile 
+C -> F: 提交图片上传请求
+F -> S: 发送文件请求
+activate S
+
+alt 请求中包含文件
+    S -> FS: 创建文件读取流
+    activate FS
+    FS --> S: 读取文件流
+    deactivate FS
+
+    alt 配置启用
+        S -> Config: 检查配置是否启用
+        activate Config
+        Config --> S: 返回配置结果
+        deactivate Config
+        
+        alt 配置已启用
+            S -> FS: 调用uploadFile函数上传文件
+            activate FS
+            activate uploadFile
+            FS --> uploadFile: 上传文件
+        
+            deactivate FS
+            uploadFile --> S: 返回文件URL
+             deactivate uploadFile
+            S --> F: 返回文件URL给客户端
+        else 配置未启用
+            S --> F: 直接返回本地文件URL给客户端
+        end
+    else 配置未启用
+        S --> F: 直接返回本地文件URL给客户端
+    end
+
+else 请求中没有文件
+    S --> F: 返回服务器错误消息给客户端
+end
+
+deactivate S
+@enduml

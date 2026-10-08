@@ -1,0 +1,32 @@
+@startuml
+actor 用户 as U
+participant 客户端 as C
+participant 服务器 as S
+participant NewsService as NS
+
+U -> C: 发起新闻列表查询请求
+activate C
+
+C -> S: 发送请求
+activate S
+
+S -> NS: 列表查询方法
+activate NS
+NS --> S: 返回新闻列表结果
+deactivate NS
+
+alt 新闻数量大于0
+    S --> C: 返回包含新闻列表的成功响应
+    deactivate S
+
+    loop 对每篇新闻
+        S -> S: 格式化新闻发布时间为年-月-日格式
+    end
+
+else
+    S --> C: 返回空的新闻列表成功响应
+    deactivate S
+end
+
+deactivate C
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+actor 用户 as U
+participant 客户端 as C
+participant 服务器 as S
+participant NewsService as NS
+database 数据库 as DB
+
+U -> C: 发起获取文章列表请求
+activate C
+
+C ->> S: 发送请求
+activate S
+
+S ->> NS: 调用 文章获取方法
+activate NS
+NS --> S: 返回文章列表结果
+deactivate NS
+
+alt 文章数量大于0
+    S -->> C: 返回成功响应
+    deactivate S
+    loop 对每篇文章
+        S ->> S: 格式化文章时间
+    end
+else
+    S -->> C: 返回空响应
+    deactivate S
+end
+
+deactivate C
+@enduml

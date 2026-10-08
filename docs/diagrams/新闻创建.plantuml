@@ -1,0 +1,30 @@
+@startuml
+actor 用户 as U
+participant 客户端 as C
+participant 服务器 as S
+participant NewsService as NS
+
+
+U -> C: 发起创建新闻请求
+activate C
+
+C ->> S: 发送新闻信息
+activate S
+
+S ->> NS: 调用 NewsService.createArticle()
+activate NS
+NS -> NS: 创建新闻文章对象
+alt 文章对象创建成功
+    NS -->> S: 返回创建结果
+    deactivate NS
+    S -->> C: 返回成功响应
+    deactivate S
+else 文章对象创建失败
+    NS -->> S: 返回创建结果
+    deactivate NS
+    S -->> C: 返回失败响应
+    deactivate S
+end
+
+deactivate C
+@enduml
